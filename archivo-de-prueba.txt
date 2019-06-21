@@ -1,4 +1,0 @@
-Este es simplemente un archivo de prueba para tener algo en el 
-repositorio. Más adelante estaré subiendo es quema del proyecto y los 
-recursos que se usarán.
-Debemos definir cómo mostrar la información de la base de datos.
