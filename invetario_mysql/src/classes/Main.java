@@ -5,7 +5,7 @@
  */
 package classes;
 
-import VIstas.InventarioView;
+import Vistas.InventarioView;
 
 /**
  *
