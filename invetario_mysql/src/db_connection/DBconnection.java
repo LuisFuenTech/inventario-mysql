@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
  *
  * @author Luis Fuentes <luisfuau10@gmail.com>
  */
-public class DB_connection {
+public class DBconnection {
     private static final String DRIVER = "java.sql.Driver";
     private static final String SSL = "?useTimezone=true&serverTimezone=UTC"
                                    + "&useSSL=false"
@@ -29,7 +29,7 @@ public class DB_connection {
     
     
     //Constructor
-    public DB_connection(String host, String puerto, String bd_name, String username, String password){
+    public DBconnection(String host, String puerto, String bd_name, String username, String password){
         this.username = username;
         this.password = password;
         this.host = host;

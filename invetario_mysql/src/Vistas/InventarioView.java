@@ -5,18 +5,44 @@
  */
 package Vistas;
 
+import java.sql.*;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import db_connection.DBconnection;
 /**
  *
  * @author Luis Fuentes <luisfuau10@gmail.com>
  */
 public class InventarioView extends javax.swing.JFrame {
 
+    DefaultTableModel model = new DefaultTableModel();
     /**
      * Creates new form InventarioView
      */
     public InventarioView() {
         initComponents();
+        this.setSize(1030, 530);
+        this.setTitle("Tarjeta Kardex");
+        this.setResizable(false);
         this.setLocationRelativeTo(null);
+        
+        jTable_inventario = new JTable(model);
+        jScrollPane.setViewportView(jTable_inventario);
+        
+        model.addColumn("FECHA");
+        model.addColumn("DETALLE");
+        
+        model.addColumn("Q");
+        model.addColumn("COSTO UNITARIO");
+        model.addColumn("COSTO TOTAL");
+        
+        model.addColumn("Q");
+        model.addColumn("COSTO UNITARIO");
+        model.addColumn("COSTO TOTAL");
+        
+        model.addColumn("Q");
+        model.addColumn("COSTO UNITARIO");
+        model.addColumn("COSTO TOTAL");
     }
 
     /**
@@ -29,41 +55,83 @@ public class InventarioView extends javax.swing.JFrame {
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jScrollPane = new javax.swing.JScrollPane();
+        jTable_inventario = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(1030, 530));
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Inconsolata", 0, 24)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Hola Mundo MySQL");
+        mainPanel.setPreferredSize(new java.awt.Dimension(1030, 530));
+
+        jLabel2.setFont(new java.awt.Font("Muli", 0, 18)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("TARJETA KARDEX");
+
+        jLabel1.setFont(new java.awt.Font("Muli", 0, 14)); // NOI18N
+        jLabel1.setText("Artículo:");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "Item 2", "Item 3", "Item 4" }));
+
+        jScrollPane.setPreferredSize(new java.awt.Dimension(1030, 530));
+
+        jTable_inventario.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4", "Título 5", "Título 6", "Título 7", "Título 8", "Título 9", "Título 10", "Título 11"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_inventario.setPreferredSize(new java.awt.Dimension(1030, 530));
+        jScrollPane.setViewportView(jTable_inventario);
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(83, 83, 83)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGap(243, 243, 243)
+                        .addComponent(jLabel2))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(237, Short.MAX_VALUE))
+            .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(86, 86, 86)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(155, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        getContentPane().add(mainPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -108,7 +176,11 @@ public class InventarioView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JTable jTable_inventario;
     private javax.swing.JPanel mainPanel;
     // End of variables declaration//GEN-END:variables
 }
