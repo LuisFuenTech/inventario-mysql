@@ -2,6 +2,10 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/LuisFuentes/Desktop/inventario-mysql/invetario_mysql/src/Vistas/InventarioView.java</file>
+            <file>file:/C:/Users/LuisFuentes/Desktop/inventario-mysql/invetario_mysql/src/Vistas/ProductoView.java</file>
+            <file>file:/C:/Users/LuisFuentes/Desktop/inventario-mysql/invetario_mysql/src/db_connection/DBconnection.java</file>
+        </group>
     </open-files>
 </project-private>
