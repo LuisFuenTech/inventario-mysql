@@ -71,6 +71,8 @@ public class InventarioView extends javax.swing.JFrame {
         jScrollPane = new javax.swing.JScrollPane();
         jTable_inventario = new javax.swing.JTable();
         newProduct_button = new javax.swing.JButton();
+        mostrar_button = new javax.swing.JButton();
+        acciones_button = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -85,6 +87,11 @@ public class InventarioView extends javax.swing.JFrame {
         jLabel1.setText("Artículo:");
 
         producto_cbox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar" }));
+        producto_cbox.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                producto_cboxMouseClicked(evt);
+            }
+        });
         producto_cbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 seleccionarArticulo(evt);
@@ -122,6 +129,20 @@ public class InventarioView extends javax.swing.JFrame {
             }
         });
 
+        mostrar_button.setText("Mostrar");
+        mostrar_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mostrar_buttonActionPerformed(evt);
+            }
+        });
+
+        acciones_button.setText("Acciones");
+        acciones_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                acciones_buttonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout Inventario_panelLayout = new javax.swing.GroupLayout(Inventario_panel);
         Inventario_panel.setLayout(Inventario_panelLayout);
         Inventario_panelLayout.setHorizontalGroup(
@@ -132,6 +153,10 @@ public class InventarioView extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(producto_cbox, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mostrar_button)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(acciones_button)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(newProduct_button)
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -151,7 +176,9 @@ public class InventarioView extends javax.swing.JFrame {
                 .addGroup(Inventario_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(producto_cbox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(newProduct_button))
+                    .addComponent(mostrar_button)
+                    .addComponent(newProduct_button)
+                    .addComponent(acciones_button))
                 .addGap(22, 22, 22))
         );
 
@@ -161,22 +188,41 @@ public class InventarioView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void seleccionarArticulo(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionarArticulo
-        llenarTabla(producto_cbox.getSelectedItem().toString().trim());
+
+        //llenarTabla();
     }//GEN-LAST:event_seleccionarArticulo
 
     private void newProduct_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProduct_buttonActionPerformed
         nuevoProductoView();
     }//GEN-LAST:event_newProduct_buttonActionPerformed
 
-    void nuevoProductoView(){
+    private void producto_cboxMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_producto_cboxMouseClicked
+        llenarComboBox();
+    }//GEN-LAST:event_producto_cboxMouseClicked
+
+    private void mostrar_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostrar_buttonActionPerformed
+        llenarTabla();
+    }//GEN-LAST:event_mostrar_buttonActionPerformed
+
+    private void acciones_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acciones_buttonActionPerformed
+        accionesView();
+    }//GEN-LAST:event_acciones_buttonActionPerformed
+
+    void accionesView(){
+       AccionView accionView = new AccionView();
+       accionView.setInventarioForm(this);
+       accionView.articulo_label.setText(producto_cbox.getSelectedItem().toString().trim());
+       accionView.show();
+    }
+    
+    void nuevoProductoView() {
         ProductoView productoView = new ProductoView();
         productoView.setVisible(true);
     }
-    
-    void llenarTabla(String articulo_cbox) {
-        limpiarTabla();
 
+    void llenarTabla() {
         try {
+            limpiarTabla();
             String query = ("SELECT \n"
                     + "    inventario.fecha,\n"
                     + "    detalle.nombre_detalle,\n"
@@ -199,7 +245,7 @@ public class InventarioView extends javax.swing.JFrame {
             conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
             con = conexion.getConnection();
             ps = con.prepareStatement(query);
-            ps.setString(1, articulo_cbox);
+            ps.setString(1, producto_cbox.getSelectedItem().toString());
 
             rs = ps.executeQuery();
 
@@ -212,21 +258,29 @@ public class InventarioView extends javax.swing.JFrame {
                 model.addRow(fila);
             }
             con.close();
+            //}
 
         } catch (SQLException ex) {
             Logger.getLogger(InventarioView.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     void limpiarTabla() {
-        int numFilas = jTable_inventario.getRowCount();
-        for (int i = 0; i < numFilas; i++) {
-            model.removeRow(0);
+        try {
+            int numFilas = jTable_inventario.getRowCount();
+            if (numFilas > 0) {
+                for (int i = 0; i < numFilas; i++) {
+                    model.removeRow(0);
+                }
+            }
+        } catch (Exception e) {
+
         }
     }
 
     void llenarComboBox() {
+        producto_cbox.removeAllItems();
+        producto_cbox.addItem("Seleccionar");
         try {
             String query = "SELECT nombre_producto FROM producto";
             conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
@@ -236,7 +290,6 @@ public class InventarioView extends javax.swing.JFrame {
 
             while (rs.next()) {
                 producto_cbox.addItem(rs.getString("nombre_producto"));
-                System.out.println(rs.getString("nombre_producto"));
             }
 
             con.close();
@@ -244,6 +297,15 @@ public class InventarioView extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(InventarioView.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    void limpiarComboBox() {
+        int cantidad = producto_cbox.getItemCount();
+
+        for (int i = 0; i < cantidad; i++) {
+            producto_cbox.removeItemAt(0);
+        }
+
     }
 
     /**
@@ -283,10 +345,12 @@ public class InventarioView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Inventario_panel;
+    private javax.swing.JButton acciones_button;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JTable jTable_inventario;
+    private javax.swing.JButton mostrar_button;
     private javax.swing.JButton newProduct_button;
     private javax.swing.JComboBox<String> producto_cbox;
     // End of variables declaration//GEN-END:variables
