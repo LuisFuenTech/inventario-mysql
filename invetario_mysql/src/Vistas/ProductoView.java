@@ -5,6 +5,9 @@
  */
 package Vistas;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  *
  * @author LuisFuentes
@@ -14,10 +17,11 @@ public class ProductoView extends javax.swing.JFrame {
     /**
      * Creates new form ProductoView
      */
-    public ProductoView(){
+    public ProductoView() {
         initComponents();
         this.setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
     }
 
     /**
@@ -52,12 +56,18 @@ public class ProductoView extends javax.swing.JFrame {
         jLabel4.setText("Costo total:");
 
         cantidad_txt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                cantidad_txtKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 cantidad_txtKeyTyped(evt);
             }
         });
 
         costo_unitario_txt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                costo_unitario_txtKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 costo_unitario_txtKeyTyped(evt);
             }
@@ -66,6 +76,11 @@ public class ProductoView extends javax.swing.JFrame {
         costo_total_txt.setEditable(false);
 
         aceptar_button.setText("Aceptar");
+        aceptar_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aceptar_buttonActionPerformed(evt);
+            }
+        });
 
         cancelar_button.setText("Cancelar");
         cancelar_button.addActionListener(new java.awt.event.ActionListener() {
@@ -81,26 +96,23 @@ public class ProductoView extends javax.swing.JFrame {
             .addGroup(Producto_panelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(Producto_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(Producto_panelLayout.createSequentialGroup()
-                        .addGroup(Producto_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(Producto_panelLayout.createSequentialGroup()
-                                .addGroup(Producto_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(Producto_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cantidad_txt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(nombre_txt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(Producto_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(Producto_panelLayout.createSequentialGroup()
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(costo_unitario_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(Producto_panelLayout.createSequentialGroup()
-                                    .addComponent(jLabel4)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(costo_total_txt))))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Producto_panelLayout.createSequentialGroup()
+                        .addGroup(Producto_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(Producto_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cantidad_txt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nombre_txt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Producto_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(Producto_panelLayout.createSequentialGroup()
+                            .addComponent(jLabel3)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(costo_unitario_txt, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(Producto_panelLayout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addGap(18, 18, 18)
+                            .addComponent(costo_total_txt)))
                     .addGroup(Producto_panelLayout.createSequentialGroup()
                         .addComponent(aceptar_button)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -155,7 +167,7 @@ public class ProductoView extends javax.swing.JFrame {
         char caracter = evt.getKeyChar();
 
         // Verificar si la tecla pulsada no es un digito
-        if (((caracter < '0') | (caracter > '9')) & (caracter != '\b') & (caracter != ',')) {
+        if (((caracter < '0') | (caracter > '9')) & (caracter != '\b') & (caracter != '.')) {
             evt.consume();  // ignorar el evento de teclado
         }
     }//GEN-LAST:event_cantidad_txtKeyTyped
@@ -164,16 +176,44 @@ public class ProductoView extends javax.swing.JFrame {
         char caracter = evt.getKeyChar();
 
         // Verificar si la tecla pulsada no es un digito
-        if (((caracter < '0') | (caracter > '9')) & (caracter != '\b') & (caracter != ',')) {
+        if (((caracter < '0') | (caracter > '9')) & (caracter != '\b') & (caracter != '.')) {
             evt.consume();  // ignorar el evento de teclado
         }
     }//GEN-LAST:event_costo_unitario_txtKeyTyped
 
-    void cerrarVentana(){
+    private void aceptar_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptar_buttonActionPerformed
+
+    }//GEN-LAST:event_aceptar_buttonActionPerformed
+
+    private void costo_unitario_txtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_costo_unitario_txtKeyReleased
+        calcularTotal();
+    }//GEN-LAST:event_costo_unitario_txtKeyReleased
+
+    private void cantidad_txtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cantidad_txtKeyReleased
+        calcularTotal();
+    }//GEN-LAST:event_cantidad_txtKeyReleased
+
+    void calcularTotal() {
+        if (!cantidad_txt.getText().equals("") & !costo_unitario_txt.getText().equals("")) {
+            double cantidad = Double.parseDouble(cantidad_txt.getText());
+            double costoUnitario = Double.parseDouble(costo_unitario_txt.getText());
+
+            System.out.println(cantidad + " " + costoUnitario);
+
+            if (costoUnitario >= 0 & cantidad >= 0) {
+                double costoTotal = cantidad * costoUnitario;
+                costo_total_txt.setText(String.valueOf(costoTotal));
+            }
+        } else {
+            costo_total_txt.setText("");
+        }
+    }
+
+    void cerrarVentana() {
         this.hide();
         System.gc();
     }
-    
+
     /**
      * @param args the command line arguments
      */
