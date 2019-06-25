@@ -169,7 +169,6 @@
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
               <ComponentRef name="buttonGroup1"/>
             </Property>
-            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Comprar"/>
           </Properties>
           <Events>
@@ -214,6 +213,8 @@
         </Component>
         <Component class="javax.swing.JTextField" name="cantidad_txt">
           <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="cantidad_txtMouseClicked"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="cantidad_txtKeyReleased"/>
             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="cantidad_txtKeyTyped"/>
           </Events>
         </Component>
@@ -224,6 +225,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="costo_unitario_txt">
           <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="costo_unitario_txtKeyReleased"/>
             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="costo_unitario_txtKeyTyped"/>
           </Events>
         </Component>
@@ -241,11 +243,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Aceptar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aceptar_buttonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="cancelar_button">
           <Properties>
             <Property name="text" type="java.lang.String" value="Cancelar"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelar_buttonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="dia_txt">
           <Events>

@@ -5,11 +5,7 @@
  */
 package Vistas;
 
-import static Vistas.InventarioView.con;
-import static Vistas.InventarioView.ps;
 import db_connection.DBconnection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -22,7 +22,7 @@ public class InventarioView extends javax.swing.JFrame {
     public DBconnection conexion;
     public static Connection con;
     public static PreparedStatement ps;
-    public static ResultSet rs;
+    public static ResultSet rs;    
 
     /**
      * Creates new form InventarioView
@@ -210,9 +210,9 @@ public class InventarioView extends javax.swing.JFrame {
 
     void accionesView(){
        AccionView accionView = new AccionView();
-       accionView.setInventarioForm(this);
+       //accionView.setInventarioForm(this);
        accionView.articulo_label.setText(producto_cbox.getSelectedItem().toString().trim());
-       accionView.show();
+       accionView.setVisible(true);
     }
     
     void nuevoProductoView() {

@@ -5,7 +5,17 @@
  */
 package Vistas;
 
+import classes.Detalle;
+import classes.Producto;
+import db_connection.DBconnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,6 +25,16 @@ public class AccionView extends javax.swing.JFrame {
 
     private String articulo;
     private javax.swing.JFrame inventarioForm;
+    private Producto producto;
+    private Detalle detalle;
+    public DBconnection conexion;
+    public static Connection con;
+    public static PreparedStatement ps;
+    public static ResultSet rs;
+    public static PreparedStatement ps_detalle;
+    public static ResultSet rs_detalle;
+    public static PreparedStatement ps_kardex;
+    public static ResultSet rs_kardex;
 
     public JFrame getInventarioForm() {
         return inventarioForm;
@@ -31,6 +51,7 @@ public class AccionView extends javax.swing.JFrame {
     public void setArticulo(String articulo) {
         this.articulo = articulo;
     }
+
     /**
      * Creates new form AccionView
      */
@@ -40,9 +61,10 @@ public class AccionView extends javax.swing.JFrame {
         this.setSize(230, 300);
         this.setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        articulo_label.setText(articulo);
-        costo_total_txt.setText(articulo);
-        System.out.println("Articulo: "+this.articulo);
+        //articulo_label.setText(articulo);
+        //costo_total_txt.setText(articulo);
+        System.out.println("Articulo: " + this.articulo);
+
     }
 
     /**
@@ -80,7 +102,6 @@ public class AccionView extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         buttonGroup1.add(comprar_rButton);
-        comprar_rButton.setSelected(true);
         comprar_rButton.setText("Comprar");
         comprar_rButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,7 +131,15 @@ public class AccionView extends javax.swing.JFrame {
 
         jLabel4.setText("Artículo:");
 
+        cantidad_txt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cantidad_txtMouseClicked(evt);
+            }
+        });
         cantidad_txt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                cantidad_txtKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 cantidad_txtKeyTyped(evt);
             }
@@ -119,6 +148,9 @@ public class AccionView extends javax.swing.JFrame {
         jLabel5.setText("Costo unitario:");
 
         costo_unitario_txt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                costo_unitario_txtKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 costo_unitario_txtKeyTyped(evt);
             }
@@ -129,8 +161,18 @@ public class AccionView extends javax.swing.JFrame {
         costo_total_txt.setEditable(false);
 
         aceptar_button.setText("Aceptar");
+        aceptar_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aceptar_buttonActionPerformed(evt);
+            }
+        });
 
         cancelar_button.setText("Cancelar");
+        cancelar_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelar_buttonActionPerformed(evt);
+            }
+        });
 
         dia_txt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -283,11 +325,11 @@ public class AccionView extends javax.swing.JFrame {
     }//GEN-LAST:event_costo_unitario_txtKeyTyped
 
     private void vender_rButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vender_rButtonActionPerformed
-        costo_unitario_txt.setEditable(false);
+        manejarVenta();
     }//GEN-LAST:event_vender_rButtonActionPerformed
 
     private void comprar_rButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comprar_rButtonActionPerformed
-        costo_unitario_txt.setEditable(true);
+        manejarCompra();
     }//GEN-LAST:event_comprar_rButtonActionPerformed
 
     private void dia_txtKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dia_txtKeyTyped
@@ -317,6 +359,284 @@ public class AccionView extends javax.swing.JFrame {
             evt.consume();  // ignorar el evento de teclado
         }
     }//GEN-LAST:event_anio_txtKeyTyped
+
+    private void aceptar_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptar_buttonActionPerformed
+        realizarAccion();
+    }//GEN-LAST:event_aceptar_buttonActionPerformed
+
+    private void costo_unitario_txtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_costo_unitario_txtKeyReleased
+        calcularTotal();
+    }//GEN-LAST:event_costo_unitario_txtKeyReleased
+
+    private void cantidad_txtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cantidad_txtKeyReleased
+        calcularTotal();
+    }//GEN-LAST:event_cantidad_txtKeyReleased
+
+    private void cantidad_txtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cantidad_txtMouseClicked
+        cargarProducto();
+    }//GEN-LAST:event_cantidad_txtMouseClicked
+
+    private void cancelar_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelar_buttonActionPerformed
+        cerrarVentana();
+    }//GEN-LAST:event_cancelar_buttonActionPerformed
+
+    void calcularTotal() {
+        if (!cantidad_txt.getText().equals("") & !costo_unitario_txt.getText().equals("")) {
+            double cantidad = Double.parseDouble(cantidad_txt.getText());
+            double costoUnitario = Double.parseDouble(costo_unitario_txt.getText());
+
+            System.out.println(cantidad + " " + costoUnitario);
+
+            if (costoUnitario >= 0 & cantidad >= 0) {
+                double costoTotal = cantidad * costoUnitario;
+                costo_total_txt.setText(String.format("%.2f", costoTotal).replace(',', '.'));
+            }
+        } else {
+            costo_total_txt.setText("");
+        }
+    }
+
+    void manejarCompra() {
+        try {
+            costo_unitario_txt.setEditable(true);
+            detalle = new Detalle();
+
+            String query = "SELECT * FROM detalle WHERE nombre_detalle = ?";
+            conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
+            con = conexion.getConnection();
+            ps = con.prepareStatement(query);
+            ps.setString(1, "compra");
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                detalle.setId(rs.getInt("id_detalle"));
+                detalle.setNombre(rs.getString("nombre_detalle"));
+            } else {
+                JOptionPane.showMessageDialog(null, "No hay registro");
+            }
+
+            con.close();
+            System.out.println(detalle.toString());
+
+            cargarProducto();
+        } catch (SQLException ex) {
+            Logger.getLogger(AccionView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void manejarVenta() {
+        cargarProducto();
+        costo_unitario_txt.setEditable(false);
+        costo_unitario_txt.setText(String.valueOf(producto.getCosto_unitario()));
+
+        try {
+            detalle = new Detalle();
+
+            String query = "SELECT * FROM detalle WHERE nombre_detalle = ?";
+            conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
+            con = conexion.getConnection();
+            ps = con.prepareStatement(query);
+            ps.setString(1, "venta");
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                detalle.setId(rs.getInt("id_detalle"));
+                detalle.setNombre(rs.getString("nombre_detalle"));
+            } else {
+                JOptionPane.showMessageDialog(null, "No hay registro");
+            }
+
+            con.close();
+            System.out.println(detalle.toString());
+
+            cargarProducto();
+        } catch (SQLException ex) {
+            Logger.getLogger(AccionView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void guardarKardex(String accion) {
+        try {
+            if (accion.equals("compra")) {
+                String fecha = anio_txt.getText() + "-" + mes_txt.getText() + "-" + dia_txt.getText();
+                String kardexQuery = "INSERT INTO \n"
+                        + "	kardex (\n"
+                        + "		fecha, \n"
+                        + "        cantidad_entrada, \n"
+                        + "        entrada_unitario, \n"
+                        + "        entrada_total, \n"
+                        + "        id_detalle, \n"
+                        + "        id_producto)\n"
+                        + "VALUES (?,?,?,?,?,?)";
+
+                conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
+                con = conexion.getConnection();
+                ps_kardex = con.prepareStatement(kardexQuery);
+
+                ps_kardex.setString(1, fecha);
+                ps_kardex.setInt(2, Integer.valueOf(cantidad_txt.getText()));
+                ps_kardex.setDouble(3, Double.valueOf(costo_unitario_txt.getText()));
+                ps_kardex.setDouble(4, Double.valueOf(costo_total_txt.getText()));
+                ps_kardex.setInt(5, detalle.getId());
+                ps_kardex.setInt(6, producto.getId());
+
+                int notifica = ps_kardex.executeUpdate();
+
+                if (notifica > 0) {
+                    JOptionPane.showMessageDialog(null, "Persona guardada");
+                    cerrarVentana();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error al guardar persona");
+                }
+
+                con.close();//Cerrar la conexión
+            }
+
+            if (accion.equals("venta")) {
+                String fecha = anio_txt.getText() + "-" + mes_txt.getText() + "-" + dia_txt.getText();
+                String kardexQuery = "INSERT INTO \n"
+                        + "	kardex (\n"
+                        + "		fecha, \n"
+                        + "        cantidad_salida, \n"
+                        + "        salida_unitaria, \n"
+                        + "        salida_total, \n"
+                        + "        id_detalle, \n"
+                        + "        id_producto)\n"
+                        + "VALUES (?,?,?,?,?,?)";
+
+                conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
+                con = conexion.getConnection();
+                ps_kardex = con.prepareStatement(kardexQuery);
+
+                ps_kardex.setString(1, fecha);
+                ps_kardex.setInt(2, Integer.valueOf(cantidad_txt.getText()));
+                ps_kardex.setDouble(3, Double.valueOf(costo_unitario_txt.getText()));
+                ps_kardex.setDouble(4, Double.valueOf(costo_total_txt.getText()));
+                ps_kardex.setInt(5, detalle.getId());
+                ps_kardex.setInt(6, producto.getId());
+
+                int notifica = ps_kardex.executeUpdate();
+
+                if (notifica > 0) {
+                    JOptionPane.showMessageDialog(null, "Persona guardada");
+                    cerrarVentana();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error al guardar persona");
+                }
+
+                con.close();//Cerrar la conexión
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(AccionView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void realizarAccion() {
+        try {
+            System.out.println("Hey: " + producto.toString());
+            int cantidad = Integer.valueOf(cantidad_txt.getText());
+            double costo_total = Double.valueOf(costo_total_txt.getText());
+
+            conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
+            con = conexion.getConnection();
+
+            if (comprar_rButton.isSelected()) {
+                double costo_unitario = producto.calcularTotal(costo_total) / producto.calcularCantidad(cantidad);
+
+                String query = "UPDATE producto SET "
+                        + "cantidad_producto = ?, "
+                        + "costo_unitario_producto = ?, "
+                        + "costo_total_producto = ? "
+                        + "WHERE nombre_producto = ?";
+
+                ps = con.prepareStatement(query);
+                ps.setInt(1, producto.calcularCantidad(cantidad));
+                ps.setDouble(2, costo_unitario);
+                ps.setDouble(3, producto.calcularTotal(costo_total));
+                ps.setString(4, producto.getNombre());
+
+                int notifica = ps.executeUpdate();
+
+                if (notifica > 0) {
+                    JOptionPane.showMessageDialog(null, "Compra registrada");
+                    guardarKardex("compra");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error al registrar");
+                    //limpiar();
+                }
+
+            }
+            if (vender_rButton.isSelected()) {
+
+                double ventaUnitario = producto.ventaTotal(costo_total) / producto.ventaCantidad(cantidad);
+
+                String query = "UPDATE producto SET "
+                        + "cantidad_producto = ?, "
+                        + "costo_unitario_producto = ?, "
+                        + "costo_total_producto = ? "
+                        + "WHERE nombre_producto = ?";
+
+                ps = con.prepareStatement(query);
+                ps.setInt(1, producto.ventaCantidad(cantidad));
+                ps.setDouble(2, ventaUnitario);
+                ps.setDouble(3, producto.ventaTotal(costo_total));
+
+                ps.setString(4, producto.getNombre());
+
+                int notifica = ps.executeUpdate();
+
+                if (notifica > 0) {
+                    JOptionPane.showMessageDialog(null, "Compra registrada");
+                    guardarKardex("venta");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error al registrar");
+                    //limpiar();
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AccionView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void cerrarVentana() {
+        this.hide();
+        System.gc();
+    }
+
+    void cargarProducto() {
+        try {
+            producto = new Producto();
+
+            String query = "SELECT * FROM producto WHERE nombre_producto = ?";
+            conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
+            con = conexion.getConnection();
+            ps = con.prepareStatement(query);
+            System.out.println(articulo_label.getText());
+            ps.setString(1, articulo_label.getText());
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                producto.setId(rs.getInt("id_producto"));
+                producto.setNombre(rs.getString("nombre_producto"));
+                producto.setCantidad(rs.getInt("cantidad_producto"));
+                producto.setCosto_unitario(rs.getDouble("costo_unitario_producto"));
+                producto.setCosto_total(rs.getDouble("costo_total_producto"));
+            } else {
+                JOptionPane.showMessageDialog(null, "No hay registro");
+            }
+
+            con.close();
+            System.out.println(producto.toString());
+            System.out.println("Final");
+
+        } catch (SQLException ex) {
+            Logger.getLogger(AccionView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * @param args the command line arguments

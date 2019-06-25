@@ -18,7 +18,8 @@ public class Producto {
     private double costo_unitario;
     private double costo_total;
 
-    public Producto() {        
+    public Producto() {      
+        System.out.println("Producto instanciado");
     }
     
     public Producto(int id, String nombre, int cantidad, double costo_unitario, double costo_total) {
@@ -27,7 +28,7 @@ public class Producto {
         this.cantidad = cantidad;
         this.costo_unitario = costo_unitario;
         this.costo_total = costo_total;
-    }   
+    }
     
     public int getId() {
         return id;
@@ -67,6 +68,27 @@ public class Producto {
 
     public void setCosto_total(double costo_total) {
         this.costo_total = costo_total;
+    }
+    
+    public int calcularCantidad(int cantidad){
+        return this.cantidad + cantidad;
+    }
+
+    public double calcularTotal(double total){
+        return this.costo_total + total;
+    }
+    
+    public int ventaCantidad(int cantidad){
+        return this.cantidad - cantidad;
+    }
+    
+    public double ventaTotal(double total){
+        return this.costo_total - total;
+    }
+    
+    @Override
+    public String toString() {
+        return "Producto{" + "id=" + id + ", nombre=" + nombre + ", cantidad=" + cantidad + ", costo_unitario=" + costo_unitario + ", costo_total=" + costo_total + '}';
     }
      
 }
