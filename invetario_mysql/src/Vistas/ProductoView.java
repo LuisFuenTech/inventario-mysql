@@ -21,6 +21,7 @@ public class ProductoView extends javax.swing.JFrame {
     public static Connection con;
     public static PreparedStatement ps;
     public static ResultSet rs;
+
     /**
      * Creates new form ProductoView
      */
@@ -53,6 +54,7 @@ public class ProductoView extends javax.swing.JFrame {
         cancelar_button = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setText("Nombre:");
 
@@ -200,42 +202,40 @@ public class ProductoView extends javax.swing.JFrame {
         calcularTotal();
     }//GEN-LAST:event_cantidad_txtKeyReleased
 
-    void guardarProducto(){
+    void guardarProducto() {
         try {
-            if(!cantidad_txt.getText().equals("") & !costo_unitario_txt.getText().equals("") & !nombre_txt.getText().equals("")){
-            String query = "INSERT INTO producto (nombre_producto, cantidad_producto, costo_unitario_producto, costo_total_producto) VALUES (?,?,?,?)";
-            
-            conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
-            con = conexion.getConnection();
-            ps = con.prepareStatement(query);
-            ps.setString(1, nombre_txt.getText());
-            ps.setString(2, cantidad_txt.getText());
-            ps.setString(3, costo_unitario_txt.getText());
-            ps.setString(4, costo_total_txt.getText());
-            
-            int notifica = ps.executeUpdate();
-            
-            if(notifica > 0){
-                JOptionPane.showMessageDialog(null, "Producto guardado");
-                cerrarVentana();
-            }else{
-                JOptionPane.showMessageDialog(null, "Error al guardar persona");
+            if (!cantidad_txt.getText().equals("") & !costo_unitario_txt.getText().equals("") & !nombre_txt.getText().equals("")) {
+                String query = "INSERT INTO producto (nombre_producto, cantidad_producto, costo_unitario_producto, costo_total_producto) VALUES (?,?,?,?)";
+
+                conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
+                con = conexion.getConnection();
+                ps = con.prepareStatement(query);
+                ps.setString(1, nombre_txt.getText());
+                ps.setString(2, cantidad_txt.getText());
+                ps.setString(3, costo_unitario_txt.getText());
+                ps.setString(4, costo_total_txt.getText());
+
+                int notifica = ps.executeUpdate();
+
+                if (notifica > 0) {
+                    JOptionPane.showMessageDialog(null, "Producto guardado");
+                    cerrarVentana();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error al guardar persona");
+                }
+
+                con.close();//Cerrar la conexión
             }
-            
-            con.close();//Cerrar la conexión
-        }            
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(ProductoView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     void calcularTotal() {
         if (!cantidad_txt.getText().equals("") & !costo_unitario_txt.getText().equals("")) {
             double cantidad = Double.parseDouble(cantidad_txt.getText());
             double costoUnitario = Double.parseDouble(costo_unitario_txt.getText());
-
-            System.out.println(cantidad + " " + costoUnitario);
 
             if (costoUnitario >= 0 & cantidad >= 0) {
                 double costoTotal = cantidad * costoUnitario;

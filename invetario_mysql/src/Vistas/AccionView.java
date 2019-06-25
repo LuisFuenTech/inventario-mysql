@@ -100,6 +100,7 @@ public class AccionView extends javax.swing.JFrame {
         articulo_label = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         buttonGroup1.add(comprar_rButton);
         comprar_rButton.setText("Comprar");
@@ -385,8 +386,6 @@ public class AccionView extends javax.swing.JFrame {
             double cantidad = Double.parseDouble(cantidad_txt.getText());
             double costoUnitario = Double.parseDouble(costo_unitario_txt.getText());
 
-            System.out.println(cantidad + " " + costoUnitario);
-
             if (costoUnitario >= 0 & cantidad >= 0) {
                 double costoTotal = cantidad * costoUnitario;
                 costo_total_txt.setText(String.format("%.2f", costoTotal).replace(',', '.'));
@@ -417,7 +416,6 @@ public class AccionView extends javax.swing.JFrame {
             }
 
             con.close();
-            System.out.println(detalle.toString());
 
             cargarProducto();
         } catch (SQLException ex) {
@@ -449,7 +447,6 @@ public class AccionView extends javax.swing.JFrame {
             }
 
             con.close();
-            System.out.println(detalle.toString());
 
             cargarProducto();
         } catch (SQLException ex) {
@@ -459,7 +456,12 @@ public class AccionView extends javax.swing.JFrame {
 
     void guardarKardex(String accion) {
         try {
+            int cantidad = Integer.valueOf(cantidad_txt.getText());
+            double total = Double.valueOf(costo_total_txt.getText());
+
             if (accion.equals("compra")) {
+
+                double compra_unitario = producto.calcularTotal(total) / producto.calcularCantidad(cantidad);
                 String fecha = anio_txt.getText() + "-" + mes_txt.getText() + "-" + dia_txt.getText();
                 String kardexQuery = "INSERT INTO \n"
                         + "	kardex (\n"
@@ -468,8 +470,11 @@ public class AccionView extends javax.swing.JFrame {
                         + "        entrada_unitario, \n"
                         + "        entrada_total, \n"
                         + "        id_detalle, \n"
-                        + "        id_producto)\n"
-                        + "VALUES (?,?,?,?,?,?)";
+                        + "        id_producto,\n"
+                        + "        cantidad_pro,\n"
+                        + "        unitario_pro,\n"
+                        + "        total_pro) "
+                        + "VALUES (?,?,?,?,?,?,?,?,?)";
 
                 conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
                 con = conexion.getConnection();
@@ -481,20 +486,23 @@ public class AccionView extends javax.swing.JFrame {
                 ps_kardex.setDouble(4, Double.valueOf(costo_total_txt.getText()));
                 ps_kardex.setInt(5, detalle.getId());
                 ps_kardex.setInt(6, producto.getId());
+                ps_kardex.setInt(7, producto.calcularCantidad(cantidad));
+                ps_kardex.setDouble(8, compra_unitario);
+                ps_kardex.setDouble(9, producto.calcularTotal(total));
 
                 int notifica = ps_kardex.executeUpdate();
 
                 if (notifica > 0) {
-                    JOptionPane.showMessageDialog(null, "Persona guardada");
                     cerrarVentana();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Error al guardar persona");
+                    JOptionPane.showMessageDialog(null, "Error al guardar registro");
                 }
 
                 con.close();//Cerrar la conexión
             }
 
             if (accion.equals("venta")) {
+                double venta_unitario = producto.ventaTotal(total) / producto.ventaCantidad(cantidad);
                 String fecha = anio_txt.getText() + "-" + mes_txt.getText() + "-" + dia_txt.getText();
                 String kardexQuery = "INSERT INTO \n"
                         + "	kardex (\n"
@@ -503,8 +511,11 @@ public class AccionView extends javax.swing.JFrame {
                         + "        salida_unitaria, \n"
                         + "        salida_total, \n"
                         + "        id_detalle, \n"
-                        + "        id_producto)\n"
-                        + "VALUES (?,?,?,?,?,?)";
+                        + "        id_producto,\n"
+                        + "        cantidad_pro,\n"
+                        + "        unitario_pro,\n"
+                        + "        total_pro) "
+                        + "VALUES (?,?,?,?,?,?,?,?,?)";
 
                 conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
                 con = conexion.getConnection();
@@ -516,14 +527,16 @@ public class AccionView extends javax.swing.JFrame {
                 ps_kardex.setDouble(4, Double.valueOf(costo_total_txt.getText()));
                 ps_kardex.setInt(5, detalle.getId());
                 ps_kardex.setInt(6, producto.getId());
+                ps_kardex.setInt(7, producto.ventaCantidad(cantidad));
+                ps_kardex.setDouble(8, venta_unitario);
+                ps_kardex.setDouble(9, producto.ventaTotal(total));
 
                 int notifica = ps_kardex.executeUpdate();
 
                 if (notifica > 0) {
-                    JOptionPane.showMessageDialog(null, "Persona guardada");
                     cerrarVentana();
                 } else {
-                    JOptionPane.showMessageDialog(null, "Error al guardar persona");
+                    JOptionPane.showMessageDialog(null, "Error al guardar registro");
                 }
 
                 con.close();//Cerrar la conexión
@@ -536,7 +549,6 @@ public class AccionView extends javax.swing.JFrame {
 
     void realizarAccion() {
         try {
-            System.out.println("Hey: " + producto.toString());
             int cantidad = Integer.valueOf(cantidad_txt.getText());
             double costo_total = Double.valueOf(costo_total_txt.getText());
 
@@ -614,7 +626,6 @@ public class AccionView extends javax.swing.JFrame {
             conexion = new DBconnection("localhost", "3307", "inventario_db", "root", "Mysql@fuentech2018");
             con = conexion.getConnection();
             ps = con.prepareStatement(query);
-            System.out.println(articulo_label.getText());
             ps.setString(1, articulo_label.getText());
 
             rs = ps.executeQuery();
@@ -630,8 +641,6 @@ public class AccionView extends javax.swing.JFrame {
             }
 
             con.close();
-            System.out.println(producto.toString());
-            System.out.println("Final");
 
         } catch (SQLException ex) {
             Logger.getLogger(AccionView.class.getName()).log(Level.SEVERE, null, ex);

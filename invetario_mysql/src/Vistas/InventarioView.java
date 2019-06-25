@@ -73,6 +73,9 @@ public class InventarioView extends javax.swing.JFrame {
         newProduct_button = new javax.swing.JButton();
         mostrar_button = new javax.swing.JButton();
         acciones_button = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -90,11 +93,6 @@ public class InventarioView extends javax.swing.JFrame {
         producto_cbox.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 producto_cboxMouseClicked(evt);
-            }
-        });
-        producto_cbox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                seleccionarArticulo(evt);
             }
         });
 
@@ -122,7 +120,7 @@ public class InventarioView extends javax.swing.JFrame {
         jTable_inventario.setPreferredSize(new java.awt.Dimension(1030, 530));
         jScrollPane.setViewportView(jTable_inventario);
 
-        newProduct_button.setText("Nuevo producto");
+        newProduct_button.setText("Nuevo artículo");
         newProduct_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newProduct_buttonActionPerformed(evt);
@@ -143,6 +141,19 @@ public class InventarioView extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setBackground(new java.awt.Color(0, 204, 204));
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("ENTRADAS");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("SALIDAS");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("SALDO");
+
         javax.swing.GroupLayout Inventario_panelLayout = new javax.swing.GroupLayout(Inventario_panel);
         Inventario_panel.setLayout(Inventario_panelLayout);
         Inventario_panelLayout.setHorizontalGroup(
@@ -161,17 +172,32 @@ public class InventarioView extends javax.swing.JFrame {
                 .addComponent(newProduct_button)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(Inventario_panelLayout.createSequentialGroup()
-                .addGap(492, 492, 492)
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(Inventario_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(Inventario_panelLayout.createSequentialGroup()
+                        .addGap(492, 492, 492)
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(Inventario_panelLayout.createSequentialGroup()
+                        .addGap(206, 206, 206)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         Inventario_panelLayout.setVerticalGroup(
             Inventario_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Inventario_panelLayout.createSequentialGroup()
                 .addGap(7, 7, 7)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(Inventario_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(Inventario_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -186,11 +212,6 @@ public class InventarioView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void seleccionarArticulo(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionarArticulo
-
-        //llenarTabla();
-    }//GEN-LAST:event_seleccionarArticulo
 
     private void newProduct_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newProduct_buttonActionPerformed
         nuevoProductoView();
@@ -232,9 +253,9 @@ public class InventarioView extends javax.swing.JFrame {
                     + "    inventario.cantidad_salida,\n"
                     + "    inventario.salida_unitaria,\n"
                     + "    inventario.salida_total,\n"
-                    + "    producto.cantidad_producto,\n"
-                    + "    producto.costo_unitario_producto,\n"
-                    + "    producto.costo_total_producto\n"
+                    + "    inventario.cantidad_pro,\n"
+                    + "    inventario.unitario_pro,\n"
+                    + "    inventario.total_pro\n"
                     + "FROM kardex inventario\n"
                     + "INNER JOIN detalle\n"
                     + "	ON detalle.id_detalle = inventario.id_detalle\n"
@@ -291,7 +312,6 @@ public class InventarioView extends javax.swing.JFrame {
             while (rs.next()) {
                 producto_cbox.addItem(rs.getString("nombre_producto"));
             }
-
             con.close();
 
         } catch (SQLException ex) {
@@ -348,6 +368,9 @@ public class InventarioView extends javax.swing.JFrame {
     private javax.swing.JButton acciones_button;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane;
     private javax.swing.JTable jTable_inventario;
     private javax.swing.JButton mostrar_button;
