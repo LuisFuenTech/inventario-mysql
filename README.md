@@ -12,7 +12,4 @@ y compras) en una cuenta
 
 ## Autores
 
-* [Luis Alberto Rodriguez Estremor](https://github.com/lucman2)
-* [Luis Alberto Fuentes Auraad](https://github.com/luisfuentech)
-
-_Sí, así es, somos ¡Tocayos! separados al nacer_
+* [Luis Fuentes](https://github.com/luisfuentech)
